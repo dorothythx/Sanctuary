@@ -11,16 +11,17 @@ export const TOOLS: Record<ToolId, { label: string; Icon: LucideIcon; blurb: str
   companion: { label: 'Companion', Icon: Cat, blurb: 'A small animal companion will live here.' },
 }
 
-interface Props { tools: ToolId[]; active: PanelId | null; onToggle: (id: PanelId) => void }
-export const FloatingToolbar = memo(function FloatingToolbar({ tools, active, onToggle }: Props) {
+interface Props { tools: ToolId[]; active: PanelId | null; onToggle: (id: PanelId) => void; busy?: ToolId[] }
+export const FloatingToolbar = memo(function FloatingToolbar({ tools, active, onToggle, busy = [] }: Props) {
   return (
     <nav aria-label="Tools" className="glass fixed bottom-[calc(1rem+var(--sab))] left-[calc(1rem+var(--sal))] z-20 flex gap-1 rounded-full p-1.5 tablet-portrait:left-1/2 tablet-portrait:-translate-x-1/2">
       {tools.map(id => {
         const { label, Icon } = TOOLS[id]
         return (
           <div key={id} className="group relative">
-            <button className="icon-btn" aria-label={label} aria-pressed={active === id} aria-expanded={active === id} onClick={() => onToggle(id)}>
+            <button className="icon-btn" aria-label={busy.includes(id) ? `${label} (running)` : label} aria-pressed={active === id} aria-expanded={active === id} onClick={() => onToggle(id)}>
               <Icon size={20} strokeWidth={1.6} />
+              {busy.includes(id) && <span aria-hidden="true" className="absolute right-2 top-2 h-2 w-2 rounded-full bg-[#7fb08a] ring-2 ring-white/80" />}
             </button>
             <span role="tooltip" className="pointer-events-none absolute -top-9 left-1/2 -translate-x-1/2 whitespace-nowrap rounded-md bg-[#2f4a35] px-2 py-1 text-xs text-[#f6f1e4] opacity-0 transition-opacity group-hover:opacity-100 group-has-[:focus-visible]:opacity-100 group-has-[[aria-pressed=true]]:hidden">{label}</span>
           </div>

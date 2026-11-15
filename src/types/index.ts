@@ -8,3 +8,12 @@ export interface Settings {
   sceneId: string; mode: Mode; positions: Record<string, Pos>
 }
 export interface Task { id: string; text: string; done: boolean; createdAt: number }
+export type Preset = 'focus' | 'short' | 'long'
+export interface Lap { n: number; split: number; total: number }
+export interface TimerState {
+  tab: 'stopwatch' | 'focus'
+  /** elapsed = accumulated + (running ? now - startedAt : 0) */
+  sw: { running: boolean; startedAt: number; accumulated: number; laps: Lap[] }
+  /** remaining = running ? endAt - now : remainingMs */
+  cd: { preset: Preset; minutes: Record<Preset, number>; status: 'idle' | 'running' | 'paused' | 'finished'; endAt: number; remainingMs: number; unseen: boolean }
+}

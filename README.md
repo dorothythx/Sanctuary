@@ -21,7 +21,8 @@ npm run preview    # serve the production build
 | 1.1 | Liquid Glass interface | Done |
 | 2.1 | To-do list | Done |
 | 2.2 | CMU Regular typography (Thai) | Done |
-| 2.x | Stopwatch & focus timer, notes | Planned |
+| 2.2 | Stopwatch & focus timer | Done |
+| 2.x | Notes | Planned |
 | 3+ | Music, ambient sounds, garden, companion, park explorer | Planned |
 
 ## Park photographs
@@ -45,6 +46,14 @@ If a file is missing, a soft green gradient is shown instead. Use photos you own
   - Completed tasks are listed separately; "Clear completed" removes them; the footer shows how many remain.
   - Saved automatically under `sanctuary:todos`. Invalid or corrupted stored data is ignored safely.
 
+- **Stopwatch & focus timer**
+  - Stopwatch: start, pause, resume, reset, laps (split + total, fastest/slowest marked when there are two or more laps).
+  - Focus timer: Focus 25 / Short break 5 / Long break 15, with a custom duration (1–180 min) per preset, a circular progress ring and a completion state.
+  - Accurate by design: state stores timestamps (`startedAt`, `endAt`), never a per-second counter, so time is correct after closing the panel, switching tools, refreshing, or a throttled/hidden tab. A countdown that expired while the page was closed shows as complete on return.
+  - The engine (`src/services/timerStore.ts`) lives outside React, so timers keep running when the panel is closed. A small dot on the toolbar icon shows that one is running.
+  - Completion: a glass toast appears (dismissable). The browser Notification API is used only if permission was already granted; Sanctuary never requests it.
+  - Saved under `sanctuary:timer`; stored data is validated and clamped before use.
+
 ## Typography
 
 - **Thai script:** CMU Regular, registered with `@font-face` in `src/styles/globals.css` as family `CMU`, weight 400 (also served for 500 so nothing is synthetically bolded), `font-display: swap`.
@@ -61,6 +70,9 @@ src/
     environment/ParkScene.tsx      background scenes + crossfade
     interface/                     toolbar, clock, panel shell, settings, mode selector
     tools/TodoPanel.tsx            to-do list
+    tools/TimerPanel.tsx           stopwatch + focus timer UI
+    tools/TimerToast.tsx           completion toast
+  services/timerStore.ts           timer engine (persistence, completion, hooks)
   hooks/                           useClock, useLocalStorage (optional sanitizer)
   types/index.ts
   constants.ts                     defaults, per-mode tool lists
@@ -71,7 +83,7 @@ public/fonts/CMU-Regular.woff2     Thai typeface
 
 ## Storage keys
 
-`sanctuary:settings` (interface preferences), `sanctuary:todos` (tasks).
+`sanctuary:settings` (interface preferences), `sanctuary:todos` (tasks), `sanctuary:timer` (stopwatch and countdown).
 
 ## Browser notes
 
