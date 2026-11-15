@@ -22,6 +22,8 @@ npm run preview    # serve the production build
 | 2.1 | To-do list | Done |
 | 2.2 | CMU Regular typography (Thai) | Done |
 | 2.2 | Stopwatch & focus timer | Done |
+| 2.2.1 | Timer display refinement (MM:SS / H:MM:SS) | Done |
+| 3 | YouTube music player + saved library | Done |
 | 2.x | Notes | Planned |
 | 3+ | Music, ambient sounds, garden, companion, park explorer | Planned |
 
@@ -54,6 +56,16 @@ If a file is missing, a soft green gradient is shown instead. Use photos you own
   - Completion: a glass toast appears (dismissable). The browser Notification API is used only if permission was already granted; Sanctuary never requests it.
   - Saved under `sanctuary:timer`; stored data is validated and clamped before use.
 
+- **YouTube music player** (Music tool)
+  - Paste a YouTube video or playlist link; press Enter or Play. Links are parsed strictly (youtube.com, youtu.be, music.youtube.com, youtube-nocookie.com only) and reduced to a validated video/playlist ID. Auto-generated "mix" playlists cannot be embedded and are ignored. A watch link that also contains a playlist plays the playlist.
+  - Uses only the official YouTube IFrame Player API. No audio is extracted, nothing is searched or scraped, ads and restrictions are untouched, and no video IDs are built in; you supply every link.
+  - Saved library (`sanctuary:youtube`): label, category (Rain, Forest, Birds & nature, Water, Lofi study, Piano & instrumental, Other), type, remove, select-to-play, category filter. Only IDs are stored; entries are validated on load and labels are rendered as plain text.
+  - One persistent player (`src/services/youtubeService.ts` + `YouTubeHost`) mounted at the app root, so playback continues when the panel closes or you open other tools or change modes. The IFrame API script is loaded once and only after you first press play.
+  - After a refresh nothing plays automatically: your library, volume and last item are restored, and "Resume" requires a click.
+  - The video stays visible (bottom-right on desktop and iPad landscape, top-left on tablet portrait) at 356×200, which respects YouTube's 200×200 minimum player size. Stop closes it.
+  - Toolbar dots show activity: one for a running stopwatch/timer, one for playing music; both can show together.
+  - Limits: some videos disable embedding (you'll see a message); ads and availability are controlled by YouTube; iPad/iPhone ignore programmatic volume (use the device volume); autoplay always needs a user gesture.
+
 ## Typography
 
 - **Thai script:** CMU Regular, registered with `@font-face` in `src/styles/globals.css` as family `CMU`, weight 400 (also served for 500 so nothing is synthetically bolded), `font-display: swap`.
@@ -72,7 +84,10 @@ src/
     tools/TodoPanel.tsx            to-do list
     tools/TimerPanel.tsx           stopwatch + focus timer UI
     tools/TimerToast.tsx           completion toast
+    entertainment/MusicPanel.tsx   YouTube link field, controls, saved library
+    entertainment/YouTubeHost.tsx  persistent player container (always mounted)
   services/timerStore.ts           timer engine (persistence, completion, hooks)
+  services/youtubeService.ts       link parsing, library, persistent IFrame player
   hooks/                           useClock, useLocalStorage (optional sanitizer)
   types/index.ts
   constants.ts                     defaults, per-mode tool lists
@@ -83,7 +98,7 @@ public/fonts/CMU-Regular.woff2     Thai typeface
 
 ## Storage keys
 
-`sanctuary:settings` (interface preferences), `sanctuary:todos` (tasks), `sanctuary:timer` (stopwatch and countdown).
+`sanctuary:settings` (interface preferences), `sanctuary:todos` (tasks), `sanctuary:timer` (stopwatch and countdown), `sanctuary:youtube` (saved links, volume, last item).
 
 ## Browser notes
 

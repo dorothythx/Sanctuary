@@ -43,3 +43,8 @@ body { font-family: var(--font-sans); color: var(--forest); background: #6f9660;
 .panel { background: linear-gradient(180deg, rgba(255,255,255,.34) 0%, rgba(255,255,255,0) 30%), linear-gradient(135deg, rgba(250,246,234,.70), rgba(250,246,234,.58)); }
 @media (prefers-reduced-motion: reduce) { .icon-btn:active, .glass-chip:active { transform: none; } }
 .reduce-motion .icon-btn:active, .reduce-motion .glass-chip:active { transform: none; }
+
+/* Persistent YouTube player: bottom-right above the clock; top-left on tablet portrait. 356x200 meets YouTube's 200x200 minimum. */
+.yt-host { display: none; position: fixed; z-index: 28; right: calc(1.5rem + var(--sar)); bottom: calc(8.5rem + var(--sab)); width: min(356px, calc(100vw - 2rem)); height: 200px; overflow: hidden; border-radius: 1rem; background: #000; border: 1px solid rgba(255,255,255,.45); box-shadow: 0 8px 24px rgba(20,40,20,.25); }
+.yt-host[data-active="true"] { display: block; }
+@media (orientation: portrait) and (max-width: 1100px) { .yt-host { right: auto; bottom: auto; left: calc(1rem + var(--sal)); top: calc(10.5rem + var(--sat)); } }

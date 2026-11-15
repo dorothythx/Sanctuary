@@ -93,6 +93,9 @@ function Focus({ cd }: { cd: TimerState['cd'] }) {
   const finished = cd.status === 'finished'
   const h = Math.floor(secs / 3600), m = Math.floor(secs / 60) % 60, s = secs % 60
   const R = 52, C = 2 * Math.PI * R
+  // MM:SS below one hour, H:MM:SS from one hour; type size steps down with length so it always sits well inside the ring.
+  const text = h > 0 ? `${h}:${pad(m)}:${pad(s)}` : `${pad(m)}:${pad(s)}`
+  const fontSize = text.length <= 5 ? '2.4rem' : text.length <= 7 ? '1.85rem' : '1.6rem'
   const progress = finished ? 1 : total ? remaining / total : 0
   return (
     <div>
@@ -104,18 +107,18 @@ function Focus({ cd }: { cd: TimerState['cd'] }) {
           </button>
         ))}
       </div>
-      <div className="relative mx-auto mt-3 h-36 w-36" role="timer" aria-label="Countdown">
+      <div className="relative mx-auto mt-3 h-[9.5rem] w-[9.5rem]" role="timer" aria-label="Countdown">
         <svg viewBox="0 0 120 120" className="h-full w-full -rotate-90" aria-hidden="true">
           <circle cx="60" cy="60" r={R} fill="none" stroke="rgba(47,74,53,.16)" strokeWidth="5" />
           <circle cx="60" cy="60" r={R} fill="none" stroke="#2f4a35" strokeWidth="5" strokeLinecap="round" strokeDasharray={C} strokeDashoffset={C * (1 - progress)} style={{ transition: 'stroke-dashoffset .25s linear' }} />
         </svg>
-        <div className="absolute inset-0 flex flex-col items-center justify-center tabular-nums">
-          <span className="font-display text-4xl leading-none">{h > 0 ? `${pad(h)}:` : ''}{pad(m)}:{pad(s)}</span>
-          <span className="mt-1 flex items-center gap-1 text-xs opacity-75" aria-live="polite">
-            {finished ? <><Check size={13} strokeWidth={2.2} />Session complete</> : cd.status === 'paused' ? 'Paused' : running ? PRESETS[cd.preset].label : 'Ready'}
-          </span>
+        <div className="absolute inset-0 flex items-center justify-center">
+          <span className="font-display whitespace-nowrap leading-none tracking-normal tabular-nums lining-nums" style={{ fontSize }}>{text}</span>
         </div>
       </div>
+      <p className="mt-2 flex items-center justify-center gap-1 text-xs opacity-75" aria-live="polite">
+        {finished ? <><Check size={13} strokeWidth={2.2} />Session complete</> : cd.status === 'paused' ? 'Paused' : running ? `${PRESETS[cd.preset].label} · running` : 'Ready'}
+      </p>
       <div className="mt-3 flex gap-2">
         <button className={primary} onClick={running ? timer.cdPause : timer.cdStart}>
           {running ? <><Pause size={16} />Pause</> : <><Play size={16} />{finished ? 'Restart' : cd.status === 'paused' ? 'Resume' : 'Start'}</>}
