@@ -20,6 +20,7 @@ npm run preview    # serve the production build
 | 1 | Park scene, floating toolbar, panels, clock, settings, 3 modes | Done |
 | 1.1 | Liquid Glass interface | Done |
 | 2.1 | To-do list | Done |
+| 2.2 | CMU Regular typography (Thai) | Done |
 | 2.x | Stopwatch & focus timer, notes | Planned |
 | 3+ | Music, ambient sounds, garden, companion, park explorer | Planned |
 
@@ -44,6 +45,14 @@ If a file is missing, a soft green gradient is shown instead. Use photos you own
   - Completed tasks are listed separately; "Clear completed" removes them; the footer shows how many remain.
   - Saved automatically under `sanctuary:todos`. Invalid or corrupted stored data is ignored safely.
 
+## Typography
+
+- **Thai script:** CMU Regular, registered with `@font-face` in `src/styles/globals.css` as family `CMU`, weight 400 (also served for 500 so nothing is synthetically bolded), `font-display: swap`.
+- **File:** `public/fonts/CMU-Regular.woff2` (about 20 KB, 241 glyphs: Basic Latin plus the full Thai block U+0E01–0E5B, with `mark`/`mkmk` positioning for vowels and tone marks).
+- **Scope:** the face is limited by `unicode-range: U+0E00-0E7F`, so the browser downloads it only when Thai text appears (for example a Thai to-do item or a Thai date). Latin text and the clock digits keep Cormorant Garamond and Inter.
+- **Fallbacks:** `Leelawadee UI` (Windows), `Thonburi` (Apple), `Noto Sans Thai`, then the generic family.
+- **Source and licence:** the font's embedded metadata reads "Version 1.00 2025 by Fontcraft: Jutipong Poosumas. Exclusive for Corporate Communication and Alumni Relations Center, Chiang Mai University", with "All rights reserved" (www.fontcraftstudio.com). It is not an open-source licence. Confirm you are permitted to redistribute it before keeping it in a public repository or publishing the app.
+
 ## Project layout
 
 ```
@@ -57,6 +66,7 @@ src/
   constants.ts                     defaults, per-mode tool lists
   styles/globals.css               Liquid Glass tokens and layout
 public/parks/                      your photographs
+public/fonts/CMU-Regular.woff2     Thai typeface
 ```
 
 ## Storage keys
